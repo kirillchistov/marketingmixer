@@ -301,12 +301,29 @@ Next.js App Router
 pnpm install
 pnpm dev
 pnpm test
-pnpm dev
 pnpm build
 pnpm deploy
 ```
 
 `pnpm build` создает статический экспорт в `out/`. Для проверки наиболее полного старого eGrocery прототипа по-прежнему можно открыть `index-mmm.html` напрямую в браузере.
+
+## Deploy на GitHub Pages
+
+Деплой описан в `.github/workflows/deploy-pages.yml`.
+
+Workflow запускается при push в `main` или `master`, а также вручную через `workflow_dispatch`. Он выполняет:
+
+1. `pnpm install --frozen-lockfile`
+2. `pnpm test`
+3. `pnpm build`
+4. публикацию папки `out/` через официальный GitHub Pages artifact
+
+Для работы URL `https://kirillchistov.github.io/marketingmixer/` в настройках репозитория нужно выбрать:
+
+- `Settings -> Pages -> Build and deployment -> Source: GitHub Actions`
+- затем запустить workflow `Deploy GitHub Pages` вручную или сделать push в `main`/`master`
+
+Если Pages настроен на branch `gh-pages`, этот workflow не будет использоваться до переключения Source на `GitHub Actions`.
 
 ## Критерии готовности GitHub Pages Demo
 
