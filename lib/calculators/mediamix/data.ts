@@ -1,0 +1,172 @@
+import type {
+  CategoryBenchmark,
+  ChannelBenchmark,
+  RiskLevel,
+  TimeHorizon,
+} from "./types";
+
+export const CHANNELS: ChannelBenchmark[] = [
+  { key: "tv", name: "ТВ", type: "traditional", roiRange: [1.8, 2.8], commission: 0 },
+  { key: "bvod", name: "BVOD / онлайн-видео", type: "traditional", roiRange: [2.1, 3.0], commission: 0 },
+  { key: "radio", name: "Радио", type: "traditional", roiRange: [1.4, 2.1], commission: 0 },
+  { key: "ooh", name: "Наружная реклама", type: "traditional", roiRange: [1.3, 2.2], commission: 0 },
+  { key: "contextual", name: "Контекст", type: "digital", roiRange: [3.2, 5.2], commission: 0 },
+  { key: "social", name: "Социальные сети", type: "digital", roiRange: [2.4, 3.8], commission: 0 },
+  { key: "email", name: "Email / CRM", type: "owned", roiRange: [3.2, 4.8], commission: 0 },
+  { key: "retailMedia", name: "Retail media", type: "retailMedia", roiRange: [2.6, 4.1], commission: 0.08 },
+  { key: "wbSearch", name: "WB: поиск", type: "marketplace", roiRange: [3.2, 4.0], commission: 0.12 },
+  { key: "ozonSearch", name: "Ozon: поиск", type: "marketplace", roiRange: [3.5, 4.5], commission: 0.15 },
+  { key: "yandexMarket", name: "Яндекс Маркет", type: "marketplace", roiRange: [3.4, 4.6], commission: 0.08 },
+  { key: "ownSite", name: "Свой сайт", type: "owned", roiRange: [2.0, 3.5], commission: 0 },
+];
+
+export const CATEGORIES: CategoryBenchmark[] = [
+  {
+    key: "fmcg",
+    name: "FMCG",
+    elasticity: -1.8,
+    optimalShares: {
+      tv: 22,
+      bvod: 10,
+      ooh: 8,
+      contextual: 10,
+      social: 8,
+      retailMedia: 16,
+      wbSearch: 8,
+      ozonSearch: 8,
+      yandexMarket: 6,
+      email: 4,
+    },
+  },
+  {
+    key: "retail",
+    name: "Ритейл",
+    elasticity: -1.5,
+    optimalShares: {
+      tv: 14,
+      bvod: 8,
+      ooh: 12,
+      contextual: 16,
+      social: 10,
+      retailMedia: 14,
+      yandexMarket: 8,
+      ownSite: 10,
+      email: 8,
+    },
+  },
+  {
+    key: "finance",
+    name: "Финансы",
+    elasticity: -0.9,
+    optimalShares: {
+      tv: 16,
+      bvod: 12,
+      contextual: 24,
+      social: 10,
+      email: 14,
+      ownSite: 14,
+      ooh: 6,
+      radio: 4,
+    },
+  },
+  {
+    key: "tech",
+    name: "Технологии",
+    elasticity: -1.1,
+    optimalShares: {
+      bvod: 14,
+      contextual: 26,
+      social: 18,
+      email: 12,
+      ownSite: 18,
+      tv: 8,
+      ooh: 4,
+    },
+  },
+  {
+    key: "travel",
+    name: "Путешествия",
+    elasticity: -1.4,
+    optimalShares: {
+      bvod: 12,
+      contextual: 26,
+      social: 14,
+      email: 10,
+      ownSite: 12,
+      tv: 14,
+      ooh: 8,
+      radio: 4,
+    },
+  },
+  {
+    key: "auto",
+    name: "Автомобили",
+    elasticity: -0.7,
+    optimalShares: {
+      tv: 22,
+      bvod: 14,
+      contextual: 16,
+      social: 8,
+      ooh: 12,
+      radio: 8,
+      ownSite: 14,
+      email: 6,
+    },
+  },
+  {
+    key: "realEstate",
+    name: "Недвижимость",
+    elasticity: -0.5,
+    optimalShares: {
+      contextual: 28,
+      social: 12,
+      ooh: 16,
+      bvod: 10,
+      ownSite: 18,
+      email: 8,
+      tv: 8,
+    },
+  },
+];
+
+export const RISK_MULTIPLIERS: Record<RiskLevel, { name: string; roi: number; confidence: number }> = {
+  low: { name: "Низкий", roi: 0.92, confidence: 8 },
+  medium: { name: "Средний", roi: 1, confidence: 0 },
+  high: { name: "Высокий", roi: 1.08, confidence: -8 },
+  veryHigh: { name: "Очень высокий", roi: 1.16, confidence: -14 },
+};
+
+export const HORIZON_MULTIPLIERS: Record<TimeHorizon, { name: string; roi: number; digitalBoost: number }> = {
+  short: { name: "1-3 месяца", roi: 0.86, digitalBoost: 1.16 },
+  medium: { name: "до 1 года", roi: 1, digitalBoost: 1 },
+  long: { name: "2+ года", roi: 1.22, digitalBoost: 0.92 },
+};
+
+export const DEFAULT_INPUT = {
+  category: "retail",
+  brandRevenue: 240_000_000,
+  budget: 18_000_000,
+  periodMonths: 3,
+  onlineShare: 35,
+  audienceType: "mass",
+  riskLevel: "medium",
+  timeHorizon: "short",
+  dataCompleteness: 55,
+  hasRetroData: false,
+  currentMix: {
+    tv: 15,
+    contextual: 25,
+    social: 15,
+    retailMedia: 20,
+    wbSearch: 10,
+    ozonSearch: 10,
+    email: 5,
+  },
+  factors: {
+    distribution: 78,
+    margin: 62,
+    promoPressure: 55,
+    seasonality: 50,
+    salesOps: 58,
+  },
+} as const;

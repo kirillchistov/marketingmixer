@@ -1,0 +1,29 @@
+{
+  "name": "marketingmixmodeler-demo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "preview": "npx serve out",
+    "test": "tsx tests/mediamix.test.ts",
+    "deploy": "pnpm build",
+    "gh-pages": "pnpm build && gh-pages -d out"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "tsx": "latest",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "gh-pages": "^6.3.0",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "recharts": "latest"
+  }
+}

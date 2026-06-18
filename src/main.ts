@@ -1,0 +1,574 @@
+import './style.css'
+import { initLanding } from './landing';
+
+const app = document.querySelector<HTMLDivElement>('#app');
+
+if (app) {
+  app.innerHTML = `
+    <div class="page">
+    <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+            <div class="header-title">
+                <span class="header-icon">🛒</span>
+                <div>
+                    <h1>Навигатор медиамикса FMCG · eGrocery Edition</h1>
+                    <p class="header-subtitle">Оптимизация бюджета для продуктовых брендов на российском рынке онлайн-доставки</p>
+                </div>
+            </div>
+            <button class="btn-export" id="exportBtn">Экспорт в PDF</button>
+        </div>
+      </header>
+
+      <div class="main-container">
+        <!-- Left Panel -->
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <!-- FMCG Brand Parameters -->
+                <section class="section">
+                    <h3 class="section-title">🏢 Параметры бренда FMCG</h3>
+                    
+                    <div class="form-group">
+                        <label class="label">
+                            Подкатегория FMCG
+                            <span class="tooltip" data-tooltip="Выберите категорию продукта">?</span>
+                        </label>
+                        <select id="fmcgCategory" class="select-input">
+                            <option value="dairy">Молочная продукция</option>
+                            <option value="meat">Мясо и деликатесы</option>
+                            <option value="grocery">Бакалея (крупы, макароны)</option>
+                            <option value="beverages">Напитки</option>
+                            <option value="confectionery">Кондитерские изделия</option>
+                            <option value="snacks">Снеки и чипсы</option>
+                            <option value="baby">Детское питание</option>
+                            <option value="frozen">Замороженные продукты</option>
+                            <option value="ready">Готовая еда</option>
+                            <option value="fruits">Фрукты и овощи</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">Позиционирование бренда</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="positioning" value="economy">
+                                <span>Эконом</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="positioning" value="mid" checked>
+                                <span>Средний ценовой сегмент</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="positioning" value="premium">
+                                <span>Премиум</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">Тип продукта</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="productType" value="basic" checked>
+                                <span>Базовый (длинный срок хранения)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="productType" value="ultra_fresh">
+                                <span>Ультра-свежий (короткий срок)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="productType" value="ready_to_eat">
+                                <span>Готовая еда (RTE)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">
+                            Годовой оборот бренда: <span id="brandRevenueValue">500 млн ₽</span>
+                            <span class="tooltip" data-tooltip="Годовой оборот бренда">?</span>
+                        </label>
+                        <input type="range" id="brandRevenue" class="slider" min="50" max="10000" value="500" step="50">
+                        <div class="slider-labels">
+                            <span>50 млн ₽</span>
+                            <span>10 млрд ₽</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Campaign Budget -->
+                <section class="section">
+                    <h3 class="section-title">💰 Бюджет кампании</h3>
+                    
+                    <div class="form-group">
+                        <label class="label">
+                            Медиабюджет на флайт
+                            <span class="tooltip" data-tooltip="Бюджет кампании">?</span>
+                        </label>
+                        <input type="text" id="budget" class="text-input" value="10 000 000" placeholder="Введите бюджет">
+                        <div class="input-hint">От 1 млн ₽ до 500 млн ₽</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">
+                            Длительность флайта: <span id="flightDurationValue">3 месяца</span>
+                        </label>
+                        <input type="range" id="flightDuration" class="slider" min="1" max="12" value="3" step="1">
+                        <div class="slider-labels">
+                            <span>1 месяц</span>
+                            <span>12 месяцев</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">Цели кампании</label>
+                        <div class="goals-checkboxes">
+                            <label class="channel-label">
+                                <input type="checkbox" id="goalAwareness" class="channel-checkbox" checked>
+                                <span>Awareness (узнаваемость)</span>
+                            </label>
+                            <label class="channel-label">
+                                <input type="checkbox" id="goalPerformance" class="channel-checkbox" checked>
+                                <span>Performance (прямые продажи)</span>
+                            </label>
+                            <label class="channel-label">
+                                <input type="checkbox" id="goalBrand" class="channel-checkbox">
+                                <span>Brand building (лояльность)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="goalPrioritiesSection" style="display: block;">
+                        <label class="label">Приоритеты целей (сумма = 100%)</label>
+                        <div class="goal-priority">
+                            <label class="label-small">Awareness: <span id="priorityAwarenessValue">40%</span></label>
+                            <input type="range" id="priorityAwareness" class="slider" min="0" max="100" value="40" step="5">
+                        </div>
+                        <div class="goal-priority">
+                            <label class="label-small">Performance: <span id="priorityPerformanceValue">50%</span></label>
+                            <input type="range" id="priorityPerformance" class="slider" min="0" max="100" value="50" step="5">
+                        </div>
+                        <div class="goal-priority">
+                            <label class="label-small">Brand: <span id="priorityBrandValue">10%</span></label>
+                            <input type="range" id="priorityBrand" class="slider" min="0" max="100" value="10" step="5">
+                        </div>
+                        <div class="priority-sum" id="prioritySum">Сумма: <span>100%</span></div>
+                    </div>
+                </section>
+
+                <!-- Operational Metrics -->
+                <section class="section">
+                    <h3 class="section-title">📊 Операционные показатели</h3>
+                    
+                    <div class="form-group">
+                        <label class="label">
+                            OSA (On-Shelf Availability): <span id="osaValue">85%</span>
+                            <span class="tooltip" data-tooltip="Доступность на виртуальной полке eGrocery">?</span>
+                        </label>
+                        <input type="range" id="osa" class="slider" min="60" max="100" value="85" step="1">
+                        <div class="slider-labels">
+                            <span>60%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">
+                            Средний рейтинг товара: <span id="ratingValue">4.2</span> <span id="ratingStars" class="rating-stars">⭐⭐⭐⭐</span>
+                        </label>
+                        <input type="range" id="rating" class="slider" min="3.0" max="5.0" value="4.2" step="0.1">
+                        <div class="slider-labels">
+                            <span>3.0</span>
+                            <span>5.0</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">
+                            Количество отзывов
+                            <span class="tooltip" data-tooltip="Влияет на конверсию и доверие">?</span>
+                        </label>
+                        <input type="text" id="reviewCount" class="text-input" value="500" placeholder="0-10000">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">
+                            Ценовой индекс: <span id="priceIndexValue">1.0</span>
+                            <span class="tooltip" data-tooltip="1.0 = средний по категории">?</span>
+                        </label>
+                        <input type="range" id="priceIndex" class="slider" min="0.7" max="1.5" value="1.0" step="0.05">
+                        <div class="slider-labels">
+                            <span>0.7</span>
+                            <span>1.5</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">
+                            Глубина промо: <span id="promoDepthValue">15%</span>
+                            <span class="tooltip" data-tooltip="Средняя скидка при акциях">?</span>
+                        </label>
+                        <input type="range" id="promoDepth" class="slider" min="0" max="40" value="15" step="1">
+                        <div class="slider-labels">
+                            <span>0%</span>
+                            <span>40%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label">
+                            Частота промо: <span id="promoFreqValue">10 дней/мес</span>
+                            <span class="tooltip" data-tooltip="Сколько дней в месяц товар в акциях">?</span>
+                        </label>
+                        <input type="range" id="promoFreq" class="slider" min="0" max="25" value="10" step="1">
+                        <div class="slider-labels">
+                            <span>0 дней</span>
+                            <span>25 дней</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- eGrocery Platforms -->
+                <section class="section">
+                    <h3 class="section-title">⭐ Выбор eGrocery площадок</h3>
+                    
+                    <div class="platform-list">
+                        <!-- Top 5 Leaders -->
+                        <div class="platform-card">
+                            <label class="platform-header">
+                                <input type="checkbox" id="platform_ozon" class="channel-checkbox" checked>
+                                <div class="platform-info">
+                                    <div class="platform-name">Ozon</div>
+                                    <div class="platform-stats">2,523 млрд ₽/год | Рост +62%</div>
+                                </div>
+                            </label>
+                            <div class="platform-details" id="details_ozon">
+                                <p><strong>Средний чек:</strong> 1,790 ₽</p>
+                                <p><strong>Форматы:</strong> 9 охватных | 5 перформанс</p>
+                                <p><strong>Комиссия:</strong> 5-25%</p>
+                                <label class="label-small">Бюджет: <span id="budget_ozon_value">20%</span></label>
+                                <input type="range" id="budget_ozon" class="slider" min="0" max="100" value="20" step="5">
+                            </div>
+                        </div>
+
+                        <div class="platform-card">
+                            <label class="platform-header">
+                                <input type="checkbox" id="platform_wb" class="channel-checkbox" checked>
+                                <div class="platform-info">
+                                    <div class="platform-name">Wildberries</div>
+                                    <div class="platform-stats">3,320 млрд ₽/год | Рост +55%</div>
+                                </div>
+                            </label>
+                            <div class="platform-details" id="details_wb">
+                                <p><strong>Средний чек:</strong> 870 ₽</p>
+                                <p><strong>Форматы:</strong> 7 охватных | 3 перформанс</p>
+                                <p><strong>Комиссия:</strong> 5-20%</p>
+                                <label class="label-small">Бюджет: <span id="budget_wb_value">25%</span></label>
+                                <input type="range" id="budget_wb" class="slider" min="0" max="100" value="25" step="5">
+                            </div>
+                        </div>
+
+                        <div class="platform-card">
+                            <label class="platform-header">
+                                <input type="checkbox" id="platform_yandex" class="channel-checkbox" checked>
+                                <div class="platform-info">
+                                    <div class="platform-name">Яндекс.Маркет</div>
+                                    <div class="platform-stats">535 млрд ₽/год | Рост +45%</div>
+                                </div>
+                            </label>
+                            <div class="platform-details" id="details_yandex">
+                                <p><strong>Средний чек:</strong> 4,250 ₽</p>
+                                <p><strong>Форматы:</strong> 7 охватных | 5 перформанс</p>
+                                <p><strong>Комиссия:</strong> 3-15%</p>
+                                <label class="label-small">Бюджет: <span id="budget_yandex_value">15%</span></label>
+                                <input type="range" id="budget_yandex" class="slider" min="0" max="100" value="15" step="5">
+                            </div>
+                        </div>
+
+                        <div class="platform-card">
+                            <label class="platform-header">
+                                <input type="checkbox" id="platform_samokat" class="channel-checkbox">
+                                <div class="platform-info">
+                                    <div class="platform-name">Самокат <span class="badge-express">Экспресс</span></div>
+                                    <div class="platform-stats">244 млрд ₽/год | Рост +53%</div>
+                                </div>
+                            </label>
+                            <div class="platform-details" id="details_samokat">
+                                <p><strong>Средний чек:</strong> 960 ₽</p>
+                                <p><strong>Форматы:</strong> 10 охватных | 11 перформанс</p>
+                                <p><strong>Доставка:</strong> до 15 мин</p>
+                                <label class="label-small">Бюджет: <span id="budget_samokat_value">0%</span></label>
+                                <input type="range" id="budget_samokat" class="slider" min="0" max="100" value="0" step="5">
+                            </div>
+                        </div>
+
+                        <div class="platform-card">
+                            <label class="platform-header">
+                                <input type="checkbox" id="platform_lavka" class="channel-checkbox">
+                                <div class="platform-info">
+                                    <div class="platform-name">Яндекс Лавка <span class="badge-express">Экспресс</span></div>
+                                    <div class="platform-stats">134 млрд ₽/год | Рост +73%</div>
+                                </div>
+                            </label>
+                            <div class="platform-details" id="details_lavka">
+                                <p><strong>Средний чек:</strong> 1,260 ₽</p>
+                                <p><strong>Форматы:</strong> 9 охватных | 10 перформанс</p>
+                                <p><strong>Доставка:</strong> Экспресс</p>
+                                <label class="label-small">Бюджет: <span id="budget_lavka_value">0%</span></label>
+                                <input type="range" id="budget_lavka" class="slider" min="0" max="100" value="0" step="5">
+                            </div>
+                        </div>
+
+                        <!-- More platforms (collapsible) -->
+                        <div class="accordion-item">
+                            <div class="accordion-header" data-target="morePlatforms">
+                                <span>Другие площадки (11)</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content" id="morePlatforms">
+                                <label class="channel-label">
+                                    <input type="checkbox" id="platform_kuper" class="channel-checkbox">
+                                    <span>Купер (СберМаркет) - 173 млрд ₽, +36%</span>
+                                </label>
+                                <label class="channel-label">
+                                    <input type="checkbox" id="platform_pyaterochka" class="channel-checkbox">
+                                    <span>Пятёрочка доставка - 85 млрд ₽, +100%</span>
+                                </label>
+                                <label class="channel-label">
+                                    <input type="checkbox" id="platform_yeda" class="channel-checkbox">
+                                    <span>Яндекс Еда - 69 млрд ₽, +104%</span>
+                                </label>
+                                <label class="channel-label">
+                                    <input type="checkbox" id="platform_lenta" class="channel-checkbox">
+                                    <span>Лента - 42 млрд ₽, +30%</span>
+                                </label>
+                                <label class="channel-label">
+                                    <input type="checkbox" id="platform_perekrestok" class="channel-checkbox">
+                                    <span>Перекрёсток - 43 млрд ₽, +53%</span>
+                                </label>
+                                <label class="channel-label">
+                                    <input type="checkbox" id="platform_magnit" class="channel-checkbox">
+                                    <span>Магнит - 34 млрд ₽, +117%</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- External Traffic -->
+                <section class="section">
+                    <h3 class="section-title">🎯 Внешний трафик и традиционные медиа</h3>
+                    <div class="external-channels">
+                        <label class="channel-label">
+                            <input type="checkbox" id="external_direct" class="channel-checkbox">
+                            <span>Яндекс.Директ → на площадки</span>
+                        </label>
+                        <label class="channel-label">
+                            <input type="checkbox" id="external_vk" class="channel-checkbox">
+                            <span>VK Реклама → на площадки</span>
+                        </label>
+                        <label class="channel-label">
+                            <input type="checkbox" id="external_telegram" class="channel-checkbox">
+                            <span>Telegram Ads → на площадки</span>
+                        </label>
+                        <label class="channel-label">
+                            <input type="checkbox" id="tv" class="channel-checkbox">
+                            <span>ТВ реклама (brand awareness)</span>
+                        </label>
+                        <label class="channel-label">
+                            <input type="checkbox" id="outdoor" class="channel-checkbox">
+                            <span>Outdoor (наружная реклама)</span>
+                        </label>
+                        <label class="channel-label">
+                            <input type="checkbox" id="radio" class="channel-checkbox">
+                            <span>Радио</span>
+                        </label>
+                        <label class="channel-label">
+                            <input type="checkbox" id="content" class="channel-checkbox">
+                            <span>Контент-маркетинг (Дзен, YouTube)</span>
+                        </label>
+                    </div>
+                </section>
+
+                <button class="btn-calculate" id="calculateBtn">Рассчитать оптимальный микс</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content" id="resultsArea">
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">📊</div>
+                <h2>Начните расчет</h2>
+                <p>Заполните параметры слева и нажмите "Рассчитать оптимальный микс" для получения рекомендаций</p>
+            </div>
+
+            <div class="results" id="results" style="display: none;">
+                <!-- Key Metrics -->
+                <section class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Прогнозируемый ROI</div>
+                        <div class="metric-value" id="roiValue">0%</div>
+                        <div class="metric-change" id="roiChange">+0%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Прогноз выручки</div>
+                        <div class="metric-value" id="salesValue">0 ₽</div>
+                        <div class="metric-change" id="salesChange">+0%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Чистая прибыль</div>
+                        <div class="metric-value" id="profitValue">0 ₽</div>
+                        <div class="metric-change" id="profitChange">После затрат</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Доля e-commerce</div>
+                        <div class="metric-value" id="ecomShareValue">0%</div>
+                        <div class="metric-change" id="ecomShareChange">От бюджета</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Индекс эффективности</div>
+                        <div class="metric-value" id="efficiencyValue">0</div>
+                        <div class="metric-change" id="efficiencyChange">из 100</div>
+                    </div>
+                </section>
+
+                <!-- Distribution Chart -->
+                <section class="chart-section">
+                    <h3 class="section-title">Оптимальное распределение бюджета</h3>
+                    <div class="chart-container" style="height: 450px;">
+                        <canvas id="treeChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Factors Impact -->
+                <section class="chart-section">
+                    <h3 class="section-title">Влияние факторов на продажи</h3>
+                    <div class="chart-container" style="height: 400px;">
+                        <canvas id="waterfallChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Distribution Analysis -->
+                <section class="chart-section">
+                    <h3 class="section-title">Анализ дистрибуции</h3>
+                    <div class="distribution-grid">
+                        <div class="gauge-card">
+                            <div class="gauge-label">OSA</div>
+                            <div class="gauge-value" id="gaugeOSA">90%</div>
+                            <div class="gauge-status" id="statusOSA">Хорошо</div>
+                        </div>
+                        <div class="gauge-card">
+                            <div class="gauge-label">ISA</div>
+                            <div class="gauge-value" id="gaugeISA">95%</div>
+                            <div class="gauge-status" id="statusISA">Отлично</div>
+                        </div>
+                        <div class="gauge-card">
+                            <div class="gauge-label">Численная дистрибуция</div>
+                            <div class="gauge-value" id="gaugeNumDist">75%</div>
+                            <div class="gauge-status" id="statusNumDist">Хорошо</div>
+                        </div>
+                        <div class="gauge-card">
+                            <div class="gauge-label">Взвешенная дистрибуция</div>
+                            <div class="gauge-value" id="gaugeWeightedDist">80%</div>
+                            <div class="gauge-status" id="statusWeightedDist">Хорошо</div>
+                        </div>
+                    </div>
+                    <div class="distribution-insight" id="distributionInsight"></div>
+                </section>
+
+                <!-- Product Reputation -->
+                <section class="chart-section">
+                    <h3 class="section-title">Репутация продукта</h3>
+                    <div class="reputation-display">
+                        <div class="reputation-main">
+                            <div class="big-rating" id="bigRating">⭐⭐⭐⭐</div>
+                            <div class="rating-number" id="bigRatingNum">4.2</div>
+                            <div class="review-count-display" id="reviewCountDisplay">1,500 отзывов</div>
+                        </div>
+                        <div class="reputation-impact" id="reputationImpact"></div>
+                    </div>
+                </section>
+
+                <!-- Channel Details Chart -->
+                <section class="chart-section" id="channelDetailsSection">
+                    <h3 class="section-title">📊 Детализация по каналам</h3>
+                    <div class="chart-container" style="height: 500px;">
+                        <canvas id="channelDetailsChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Analysis Table -->
+                <section class="table-section">
+                    <h3 class="section-title">Анализ эффективности каналов</h3>
+                    <div class="table-wrapper">
+                        <table class="analysis-table" id="analysisTable">
+                            <thead>
+                                <tr>
+                                    <th>Канал</th>
+                                    <th>Бюджет (₽)</th>
+                                    <th>Доля (%)</th>
+                                    <th>ROI</th>
+                                    <th>Прогноз продаж (₽)</th>
+                                    <th>Эффективность</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Diminishing Returns Chart -->
+                <section class="chart-section" id="diminishingReturnsSection">
+                    <h3 class="section-title">📉 Кривые убывающей отдачи</h3>
+                    <p class="chart-description">
+                        График показывает, как эффективность канала снижается при увеличении инвестиций. 
+                        Оптимальная точка - там, где кривая начинает заметно уплощаться.
+                    </p>
+                    <div class="chart-container" style="height: 400px;">
+                        <canvas id="diminishingReturnsChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Scenario Analysis -->
+                <section class="scenario-section">
+                    <h3 class="section-title">Сценарный анализ</h3>
+                    <div class="scenario-buttons">
+                        <button class="scenario-btn" data-scenario="increase">Увеличить бюджет на 25%</button>
+                        <button class="scenario-btn" data-scenario="decrease">Сократить бюджет на 25%</button>
+                        <button class="scenario-btn" data-scenario="focus3">Фокус на топ-3 площадки</button>
+                        <button class="scenario-btn" data-scenario="wb">Стратегия Wildberries (70%)</button>
+                        <button class="scenario-btn" data-scenario="multiplatform">Мультиплатформа (топ-5)</button>
+                        <button class="scenario-btn" data-scenario="improveOSA">Улучшить OSA до 95%</button>
+                        <button class="scenario-btn" data-scenario="improveRating">Повысить рейтинг до 4.5</button>
+                        <button class="scenario-btn" data-scenario="aggressivePromo">Агрессивное промо (+50% частота)</button>
+                    </div>
+                    <div class="scenario-results" id="scenarioResults" style="display: none;">
+                        <div class="scenario-comparison">
+                            <div class="comparison-item">
+                                <div class="comparison-label">Текущий ROI</div>
+                                <div class="comparison-value" id="currentROI">0%</div>
+                            </div>
+                            <div class="comparison-arrow">→</div>
+                            <div class="comparison-item">
+                                <div class="comparison-label">ROI сценария</div>
+                                <div class="comparison-value" id="scenarioROI">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recommendations -->
+                <section class="recommendations-section">
+                    <h3 class="section-title">Рекомендации экспертов</h3>
+                    <div class="recommendations-content" id="recommendations">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+  `;
+}
+
+initLanding();

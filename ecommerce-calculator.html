@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Калькулятор</title>
+    <style>
+        :root {
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-cream-100: rgba(255, 255, 253, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-300: rgba(167, 169, 169, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-300: rgba(50, 184, 198, 1);
+            --color-teal-500: rgba(33, 128, 141, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-brown-600-rgb: 94, 82, 64;
+            --color-teal-500-rgb: 33, 128, 141;
+            --color-background: var(--color-cream-50);
+            --color-surface: var(--color-cream-100);
+            --color-text: var(--color-slate-900);
+            --color-primary: var(--color-teal-500);
+            --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+            --radius-base: 8px;
+            --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        /* Auth Screen */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: var(--color-surface);
+            border-radius: var(--radius-base);
+            padding: 32px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .auth-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--color-text);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--color-text);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: var(--radius-base);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-teal-600);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-primary);
+            border: 1px solid var(--color-border);
+            margin-top: 8px;
+        }
+
+        .error-message {
+            color: #c0152f;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* App Container */
+        .app-container {
+            display: none;
+        }
+
+        .app-header {
+            background: var(--color-surface);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .app-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            color: var(--color-slate-500);
+        }
+
+        .btn-logout {
+            padding: 6px 12px;
+            font-size: 13px;
+            width: auto;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 0 24px;
+            gap: 8px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-slate-500);
+        }
+
+        .tab:hover {
+            color: var(--color-text);
+        }
+
+        .tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        /* Content */
+        .tab-content {
+            display: none;
+            padding: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Calculator Card */
+        .calculator-card {
+            background: var(--color-surface);
+            border-radius: var(--radius-base);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: rgba(var(--color-teal-500-rgb), 0.08);
+            padding: 16px;
+            border-radius: var(--radius-base);
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: var(--color-slate-500);
+            margin-bottom: 6px;
+        }
+
+        .result-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .platform-select {
+            margin-bottom: 20px;
+        }
+
+        select.form-input {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Screen -->
+    <div id="authScreen" class="auth-container">
+        <div class="auth-box">
+            <h1 class="auth-title">E-Commerce Калькулятор</h1>
+            
+            <!-- Login Form -->
+            <div id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="loginEmail" class="form-input" placeholder="your@email.com">
+                    <div id="loginError" class="error-message hidden"></div>
+                </div>
+                <button class="btn btn-primary" onclick="handleLogin()">Войти</button>
+                <button class="btn btn-secondary" onclick="showRegister()">Регистрация</button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="hidden">
+                <div class="form-group">
+                    <label class="form-label">Имя</label>
+                    <input type="text" id="registerName" class="form-input" placeholder="Иван Иванов">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="registerEmail" class="form-input" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Телефон</label>
+                    <input type="tel" id="registerPhone" class="form-input" placeholder="+7 (999) 123-45-67">
+                </div>
+                <div id="registerError" class="error-message hidden"></div>
+                <button class="btn btn-primary" onclick="handleRegister()">Зарегистрироваться</button>
+                <button class="btn btn-secondary" onclick="showLogin()">Уже есть аккаунт</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Screen -->
+    <div id="appScreen" class="app-container">
+        <header class="app-header">
+            <h1 class="app-title">E-Commerce Калькулятор</h1>
+            <div class="user-info">
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-primary btn-logout" onclick="handleLogout()">Выйти</button>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('ozon')">Ozon</div>
+            <div class="tab" onclick="switchTab('wildberries')">Wildberries</div>
+            <div class="tab" onclick="switchTab('yandex')">Яндекс.Маркет</div>
+        </div>
+
+        <!-- Ozon Calculator -->
+        <div id="ozon" class="tab-content active">
+            <div class="calculator-card">
+                <h2 class="card-title">Калькулятор юнит-экономики Ozon</h2>
+                
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label">Цена товара (₽)</label>
+                        <input type="number" id="ozonPrice" class="form-input" value="1000" onchange="calculateOzon()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Себестоимость (₽)</label>
+                        <input type="number" id="ozonCost" class="form-input" value="500" onchange="calculateOzon()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Комиссия Ozon (%)</label>
+                        <input type="number" id="ozonCommission" class="form-input" value="15" min="5" max="25" onchange="calculateOzon()">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label">Логистика (₽)</label>
+                        <input type="number" id="ozonLogistics" class="form-input" value="150" onchange="calculateOzon()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Тип доставки</label>
+                        <select id="ozonDelivery" class="form-input" onchange="calculateOzon()">
+                            <option value="fbo">FBO (со склада Ozon)</option>
+                            <option value="fbs">FBS (со своего склада)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Возвратов (%)</label>
+                        <input type="number" id="ozonReturns" class="form-input" value="10" min="0" max="100" onchange="calculateOzon()">
+                    </div>
+                </div>
+
+                <div class="result-grid">
+                    <div class="result-card">
+                        <div class="result-label">Комиссия маркетплейса</div>
+                        <div class="result-value" id="ozonCommissionAmount">0 ₽</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Чистая выручка</div>
+                        <div class="result-value" id="ozonRevenue">0 ₽</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Чистая прибыль</div>
+                        <div class="result-value" id="ozonProfit">0 ₽</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Маржинальность</div>
+                        <div class="result-value" id="ozonMargin">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wildberries Calculator -->
+        <div id="wildberries" class="tab-content">
+            <div class="calculator-card">
+                <h2 class="card-title">Калькулятор юнит-экономики Wildberries</h2>
+                
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label">Цена товара (₽)</label>
+                        <input type="number" id="wbPrice" class="form-input" value="1000" onchange="calculateWB()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Себестоимость (₽)</label>
+                        <input type="number" id="wbCost" class="form-input" value="500" onchange="calculateWB()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Комиссия WB (%)</label>
+                        <input type="number" id="wbCommission" class="form-input" value="12" min="5" max="20" onchange="calculateWB()">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label">Логистика (₽)</label>
+                        <input type="number" id="wbLogistics" class="form-input" value="120" onchange="calculateWB()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Хранение (₽/мес)</label>
+                        <input type="number" id="wbStorage" class="form-input" value="50" onchange="calculateWB()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Возвратов (%)</label>
+                        <input type="number" id="wbReturns" class="form-input" value="8" min="0" max="100" onchange="calculateWB()">
+                    </div>
+                </div>
+
+                <div class="result-grid">
+                    <div class="result-card">
+                        <div class="result-label">Комиссия маркетплейса</div>
+                        <div class="result-value" id="wbCommissionAmount">0 ₽</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Чистая выручка</div>
+                        <div class="result-value" id="wbRevenue">0 ₽</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Чистая прибыль</div>
+                        <div class="result-value" id="wbProfit">0 ₽</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Маржинальность</div>
+                        <div class="result-value" id="wbMargin">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yandex Market Calculator -->
+        <div id="yandex" class="tab-content">
+            <div class="calculator-card">
+                <h2 class="card-title">Калькулятор юнит-экономики Яндекс.Маркет</h2>
+                
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label">Цена товара (₽)</label>
+                        <input type="number" id="ymPrice" class="form-input" value="1000" onchange="calculateYM()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Себестоимость (₽)</label>
+                        <input type="number" id="ymCost" class="form-input" value="500" onchange="calculateYM()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Комиссия ЯМ (%)</label>
+                        <input type="number" id="ymCommission" class="form-input" value="8" min="3" max="15" onchange="calculateYM()">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label">Логистика (₽)</label>
+                        <input type="number" id="ymLogistics" class="form-input" value="100" onchange="calculateYM()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Модель работы</label>
+                        <select id="ymModel" class="form-input" onchange="calculateYM()">
+                            <option value="fby">FBY (Fulfillment by Yandex)</option>
+                            <option value="fbs">FBS (Fulfillment by Seller)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Возвратов (%)</label>
+                        <input type="number" id="ymReturns" class="form-input" value="5" min="0" max="100" onchange="calculateYM()">
+                    </div>
+                </div>
+
+                <div class="result-grid">
+                    <div class="result-card">
+                        <div class="result-label">Комиссия маркетплейса</div>
+                        <div class="result-value" id="ymCommissionAmount">0 ₽</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Чистая выручка</div>
+                        <div class="result-value" id="ymRevenue">0 ₽</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Чистая прибыль</div>
+                        <div class="result-value" id="ymProfit">0 ₽</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-label">Маржинальность</div>
+                        <div class="result-value" id="ymMargin">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auth System
+        const AUTH_KEY = 'ecommerce_users';
+        const SESSION_KEY = 'ecommerce_session';
+
+        function getUsers() {
+            const data = localStorage.getItem(AUTH_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem(AUTH_KEY, JSON.stringify(users));
+        }
+
+        function getCurrentUser() {
+            const data = localStorage.getItem(SESSION_KEY);
+            return data ? JSON.parse(data) : null;
+        }
+
+        function setCurrentUser(user) {
+            localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+        }
+
+        function clearSession() {
+            localStorage.removeItem(SESSION_KEY);
+        }
+
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('registerError').classList.add('hidden');
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('registerError').classList.add('hidden');
+        }
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function validatePhone(phone) {
+            return /^\+?7\s?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$/.test(phone);
+        }
+
+        function handleRegister() {
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const errorEl = document.getElementById('registerError');
+
+            if (!name || !email || !phone) {
+                errorEl.textContent = 'Все поля обязательны для заполнения';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                errorEl.textContent = 'Некорректный email';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            if (!validatePhone(phone)) {
+                errorEl.textContent = 'Некорректный телефон (формат: +7 999 123-45-67)';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            const users = getUsers();
+            if (users.find(u => u.email === email)) {
+                errorEl.textContent = 'Пользователь с таким email уже существует';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                phone,
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            saveUsers(users);
+            setCurrentUser(newUser);
+            
+            showApp(newUser);
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const errorEl = document.getElementById('loginError');
+
+            if (!email) {
+                errorEl.textContent = 'Введите email';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                errorEl.textContent = 'Некорректный email';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            const users = getUsers();
+            const user = users.find(u => u.email === email);
+
+            if (!user) {
+                errorEl.textContent = 'Пользователь не найден';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            setCurrentUser(user);
+            showApp(user);
+        }
+
+        function handleLogout() {
+            clearSession();
+            document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('appScreen').style.display = 'none';
+            showLogin();
+        }
+
+        function showApp(user) {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('appScreen').style.display = 'block';
+            document.getElementById('userName').textContent = user.name;
+            
+            // Initialize calculators
+            calculateOzon();
+            calculateWB();
+            calculateYM();
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Calculators
+        function formatCurrency(value) {
+            return value.toLocaleString('ru-RU') + ' ₽';
+        }
+
+        function calculateOzon() {
+            const price = parseFloat(document.getElementById('ozonPrice').value) || 0;
+            const cost = parseFloat(document.getElementById('ozonCost').value) || 0;
+            const commissionPercent = parseFloat(document.getElementById('ozonCommission').value) || 0;
+            const logistics = parseFloat(document.getElementById('ozonLogistics').value) || 0;
+            const returnsPercent = parseFloat(document.getElementById('ozonReturns').value) || 0;
+
+            const commission = price * (commissionPercent / 100);
+            const revenue = price - commission;
+            const totalCost = cost + logistics;
+            const returnsCost = (price * returnsPercent / 100) * 0.3;
+            const profit = revenue - totalCost - returnsCost;
+            const margin = price > 0 ? (profit / price * 100) : 0;
+
+            document.getElementById('ozonCommissionAmount').textContent = formatCurrency(commission);
+            document.getElementById('ozonRevenue').textContent = formatCurrency(revenue);
+            document.getElementById('ozonProfit').textContent = formatCurrency(profit);
+            document.getElementById('ozonMargin').textContent = margin.toFixed(1) + '%';
+        }
+
+        function calculateWB() {
+            const price = parseFloat(document.getElementById('wbPrice').value) || 0;
+            const cost = parseFloat(document.getElementById('wbCost').value) || 0;
+            const commissionPercent = parseFloat(document.getElementById('wbCommission').value) || 0;
+            const logistics = parseFloat(document.getElementById('wbLogistics').value) || 0;
+            const storage = parseFloat(document.getElementById('wbStorage').value) || 0;
+            const returnsPercent = parseFloat(document.getElementById('wbReturns').value) || 0;
+
+            const commission = price * (commissionPercent / 100);
+            const revenue = price - commission;
+            const totalCost = cost + logistics + storage;
+            const returnsCost = (price * returnsPercent / 100) * 0.3;
+            const profit = revenue - totalCost - returnsCost;
+            const margin = price > 0 ? (profit / price * 100) : 0;
+
+            document.getElementById('wbCommissionAmount').textContent = formatCurrency(commission);
+            document.getElementById('wbRevenue').textContent = formatCurrency(revenue);
+            document.getElementById('wbProfit').textContent = formatCurrency(profit);
+            document.getElementById('wbMargin').textContent = margin.toFixed(1) + '%';
+        }
+
+        function calculateYM() {
+            const price = parseFloat(document.getElementById('ymPrice').value) || 0;
+            const cost = parseFloat(document.getElementById('ymCost').value) || 0;
+            const commissionPercent = parseFloat(document.getElementById('ymCommission').value) || 0;
+            const logistics = parseFloat(document.getElementById('ymLogistics').value) || 0;
+            const returnsPercent = parseFloat(document.getElementById('ymReturns').value) || 0;
+
+            const commission = price * (commissionPercent / 100);
+            const revenue = price - commission;
+            const totalCost = cost + logistics;
+            const returnsCost = (price * returnsPercent / 100) * 0.25;
+            const profit = revenue - totalCost - returnsCost;
+            const margin = price > 0 ? (profit / price * 100) : 0;
+
+            document.getElementById('ymCommissionAmount').textContent = formatCurrency(commission);
+            document.getElementById('ymRevenue').textContent = formatCurrency(revenue);
+            document.getElementById('ymProfit').textContent = formatCurrency(profit);
+            document.getElementById('ymMargin').textContent = margin.toFixed(1) + '%';
+        }
+
+        // Check session on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (user) {
+                showApp(user);
+            }
+        });
+    </script>
+</body>
+</html>
